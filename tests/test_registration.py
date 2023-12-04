@@ -1,44 +1,50 @@
-import time
-from selenium.webdriver.common.by import By
+from locators import Locators
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
+from random import randint
 
 
-def test_registration_correct_credentials_success(driver):
-    driver.get("https://stellarburgers.nomoreparties.site/register")
-    time.sleep(2)
+def generate_email():
+    random_numbers = randint(1, 999)
 
-    driver.find_element(By.XPATH, './/main/div/form/fieldset[1]/div/div/input').send_keys('Александра')
-    time.sleep(2)
-
-    driver.find_element(By.XPATH, './/main/div/form/fieldset[2]/div/div/input').send_keys('zvolinskaya_3_111@gmail.com')
-    time.sleep(2)
-
-    driver.find_element(By.XPATH, './/main/div/form/fieldset[3]/div/div/input').send_keys('1234567890')
-    time.sleep(2)
-
-    driver.find_element(By.XPATH, './/main/div/form/button').click()
-    time.sleep(5)
-
-    assert driver.current_url == 'https://stellarburgers.nomoreparties.site/login'
-
-    driver.quit()
+    return f'zvolinskaya_3_{random_numbers}@mail.ru'
 
 
-def test_registration_too_short_password_fail(driver):
-    driver.get("https://stellarburgers.nomoreparties.site/register")
-    time.sleep(2)
+class TestRegistration:
 
-    driver.find_element(By.XPATH, './/main/div/form/fieldset[1]/div/div/input').send_keys('Александра')
-    time.sleep(2)
+    def test_registration_correct_credentials_success(self, driver):
+        driver.get(Locators.page_url_registration_page)
+        WebDriverWait(driver, 3)
 
-    driver.find_element(By.XPATH, './/main/div/form/fieldset[2]/div/div/input').send_keys('zvolinskayatest1@gmail.com')
-    time.sleep(2)
+        driver.find_element(*Locators.locator_registration_page_input_name).send_keys('Александра')
+        WebDriverWait(driver, 3)
 
-    driver.find_element(By.XPATH, './/main/div/form/fieldset[3]/div/div/input').send_keys('1234')
-    time.sleep(2)
+        driver.find_element(*Locators.locator_registration_page_input_email).send_keys(generate_email())
+        WebDriverWait(driver, 3)
 
-    driver.find_element(By.XPATH, './/main/div/form/button').click()
-    time.sleep(2)
+        driver.find_element(*Locators.locator_registration_page_input_password).send_keys('1234567890')
+        WebDriverWait(driver, 3)
 
-    assert driver.find_element(By.XPATH, '//main/div/form/fieldset[3]/div/p').text == 'Некорректный пароль'
+        driver.find_element(*Locators.locator_registration_page_registration_button).click()
+        WebDriverWait(driver, 10).until(expected_conditions.visibility_of_element_located(Locators.locator_login_page_login_button))
 
-    driver.quit()
+        assert driver.current_url == Locators.page_url_login_page
+
+    def test_registration_too_short_password_fail(self, driver):
+        driver.get(Locators.page_url_registration_page)
+        WebDriverWait(driver, 3)
+
+        driver.find_element(*Locators.locator_registration_page_input_name).send_keys('Александра')
+        WebDriverWait(driver, 3)
+
+        driver.find_element(*Locators.locator_registration_page_input_email).send_keys(generate_email())
+        WebDriverWait(driver, 3)
+
+        driver.find_element(*Locators.locator_registration_page_input_password).send_keys('1234')
+        WebDriverWait(driver, 3)
+
+        driver.find_element(*Locators.locator_registration_page_registration_button).click()
+        WebDriverWait(driver, 10).until(expected_conditions.visibility_of_element_located(Locators.locator_registration_page_invalid_password))
+
+        assert driver.find_element(*Locators.locator_registration_page_invalid_password).text == 'Некорректный пароль'
+

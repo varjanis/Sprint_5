@@ -1,86 +1,85 @@
-import time
-from selenium.webdriver.common.by import By
+from locators import Locators
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 
 
-def test_login_via_login_button_success(driver):
-    driver.get("https://stellarburgers.nomoreparties.site/login")
-    time.sleep(2)
+class TestLogin():
+    def test_login_via_login_button_success(self, driver):
+        driver.get(Locators.page_url_login_page)
+        WebDriverWait(driver, 3)
 
-    driver.find_element(By.XPATH, './/main/div/form/fieldset[1]/div/div/input').send_keys('zvolinskaya_3@gmail.com')
-    time.sleep(2)
+        driver.find_element(*Locators.locator_login_page_input_email).send_keys('zvolinskaya_3@gmail.com')
+        WebDriverWait(driver, 3)
 
-    driver.find_element(By.XPATH, './/main/div/form/fieldset[2]/div/div/input').send_keys('1234567890')
-    time.sleep(2)
+        driver.find_element(*Locators.locator_login_page_input_password).send_keys('1234567890')
+        WebDriverWait(driver, 3)
 
-    driver.find_element(By.XPATH, './/main/div/form/button').click()
-    time.sleep(5)
+        driver.find_element(*Locators.locator_login_page_login_button).click()
+        WebDriverWait(driver, 10).until(
+            expected_conditions.visibility_of_element_located(Locators.locator_main_page_order_button))
 
-    assert driver.current_url == "https://stellarburgers.nomoreparties.site/"
+        assert driver.current_url == Locators.page_url_main_page
 
-    driver.quit()
+    def test_login_via_personal_cabinet_button_success(self, driver):
+
+        driver.get(Locators.page_url_registration_page)
+        WebDriverWait(driver, 3)
+
+        driver.find_element(*Locators.locator_registration_page_personal_cabinet_button).click()
+        WebDriverWait(driver, 3).until(expected_conditions.visibility_of_element_located(Locators.locator_login_page_login_button))
+
+        driver.find_element(*Locators.locator_login_page_input_email).send_keys('zvolinskaya_3@gmail.com')
+        WebDriverWait(driver, 3)
+
+        driver.find_element(*Locators.locator_login_page_input_password).send_keys('1234567890')
+        WebDriverWait(driver, 3)
+
+        driver.find_element(*Locators.locator_login_page_login_button).click()
+        WebDriverWait(driver, 10).until(expected_conditions.visibility_of_element_located(Locators.locator_main_page_order_button))
+
+        assert driver.current_url == Locators.page_url_main_page
+
+    def test_login_via_registration_form_button_success(self, driver):
+
+        driver.get(Locators.page_url_registration_page)
+        WebDriverWait(driver, 3)
+
+        driver.find_element(*Locators.locator_registration_page_already_registered_login_link).click()
+        WebDriverWait(driver, 3).until(expected_conditions.visibility_of_element_located(Locators.locator_login_page_login_button))
+
+        driver.find_element(*Locators.locator_login_page_input_email).send_keys('zvolinskaya_3@gmail.com')
+        WebDriverWait(driver, 3)
+
+        driver.find_element(*Locators.locator_login_page_input_password).send_keys('1234567890')
+        WebDriverWait(driver, 3)
+
+        driver.find_element(*Locators.locator_login_page_login_button).click()
+        WebDriverWait(driver, 10).until(expected_conditions.visibility_of_element_located(Locators.locator_main_page_order_button))
+
+        assert driver.current_url == Locators.page_url_main_page
+
+    def test_login_via_forgot_password_form_button_success(self, driver):
+
+        driver.get(Locators.page_url_forgot_password_page)
+        WebDriverWait(driver, 3)
+
+        driver.find_element(*Locators.locator_forgot_password_page_login_link).click()
+        WebDriverWait(driver, 10).until(expected_conditions.visibility_of_element_located(Locators.locator_login_page_login_button))
+
+        driver.find_element(*Locators.locator_login_page_input_email).send_keys('zvolinskaya_3@gmail.com')
+        WebDriverWait(driver, 3)
+
+        driver.find_element(*Locators.locator_login_page_input_password).send_keys('1234567890')
+        WebDriverWait(driver, 3)
+
+        driver.find_element(*Locators.locator_login_page_login_button).click()
+        WebDriverWait(driver, 10).until(expected_conditions.visibility_of_element_located(Locators.locator_main_page_order_button))
+
+        assert driver.current_url == Locators.page_url_main_page
 
 
-def test_login_via_personal_cabinet_button_success(driver):
-
-    driver.get("https://stellarburgers.nomoreparties.site/register")
-    time.sleep(2)
-
-    driver.find_element(By.XPATH, './/header/nav/a').click()
-    time.sleep(5)
-
-    driver.find_element(By.XPATH, './/main/div/form/fieldset[1]/div/div/input').send_keys('zvolinskaya_3@gmail.com')
-    time.sleep(2)
-
-    driver.find_element(By.XPATH, './/main/div/form/fieldset[2]/div/div/input').send_keys('1234567890')
-    time.sleep(2)
-
-    driver.find_element(By.XPATH, './/main/div/form/button').click()
-    time.sleep(5)
-
-    assert driver.current_url == "https://stellarburgers.nomoreparties.site/"
-
-    driver.quit()
 
 
-def test_login_via_registration_form_button_success(driver):
-
-    driver.get("https://stellarburgers.nomoreparties.site/register")
-    time.sleep(2)
-
-    driver.find_element(By.XPATH, './/main/div/div/p/a').click()
-    time.sleep(5)
-
-    driver.find_element(By.XPATH, './/main/div/form/fieldset[1]/div/div/input').send_keys('zvolinskaya_3@gmail.com')
-    time.sleep(2)
-
-    driver.find_element(By.XPATH, './/main/div/form/fieldset[2]/div/div/input').send_keys('1234567890')
-    time.sleep(2)
-
-    driver.find_element(By.XPATH, './/main/div/form/button').click()
-    time.sleep(5)
-
-    assert driver.current_url == "https://stellarburgers.nomoreparties.site/"
-
-    driver.quit()
 
 
-def test_login_via_forgot_password_form_button_success(driver):
 
-    driver.get("https://stellarburgers.nomoreparties.site/forgot-password")
-    time.sleep(2)
-
-    driver.find_element(By.XPATH, './/main/div/div/p/a').click()
-    time.sleep(5)
-
-    driver.find_element(By.XPATH, './/main/div/form/fieldset[1]/div/div/input').send_keys('zvolinskaya_3@gmail.com')
-    time.sleep(2)
-
-    driver.find_element(By.XPATH, './/main/div/form/fieldset[2]/div/div/input').send_keys('1234567890')
-    time.sleep(2)
-
-    driver.find_element(By.XPATH, './/main/div/form/button').click()
-    time.sleep(5)
-
-    assert driver.current_url == "https://stellarburgers.nomoreparties.site/"
-
-    driver.quit()
